@@ -67,7 +67,11 @@ export default class UsersDAO {
         email: userInfo.email,
         password: userInfo.password
       }
-      await users.insertOne(query)
+      await users.insertOne(
+          query,
+          { writeConcern: majority}
+        )
+
       return { success: true }
     } catch (e) {
       if (String(e).startsWith("MongoError: E11000 duplicate key error")) {

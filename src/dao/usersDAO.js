@@ -69,7 +69,7 @@ export default class UsersDAO {
       }
       await users.insertOne(
           query,
-          { writeConcern: majority}
+          { w: "majority"}
         )
 
       return { success: true }
@@ -182,8 +182,9 @@ export default class UsersDAO {
       // TODO Ticket: User Preferences
       // Use the data in "preferences" to update the user's preferences.
       const updateResponse = await users.updateOne(
-        { someField: someValue },
-        { $set: { someOtherField: someOtherValue } },
+        { email: email },
+        { $set: { preferences: preferences } },
+        { upsert: true}
       )
 
       if (updateResponse.matchedCount === 0) {

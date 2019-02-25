@@ -29,18 +29,20 @@ const MongoError = require("mongodb").MongoError
     // check that its type is a string
     // a projection is not required, but may help reduce the amount of data sent
     // over the wire!
-    const predicate = { somefield: { $someOperator: true } }
+    const predicate = { lastUpdate: { $exists: true } }
     const projection = {}
     const cursor = await mflix
       .collection("movies")
       .find(predicate, projection)
       .toArray()
     const moviesToMigrate = cursor.map(({ _id, lastupdated }) => ({
-      updateOne: {
-        filter: { _id: ObjectId(_id) },
-        update: {
-          $set: { lastupdated: new Date(Date.parse(lastupdated)) },
-        },
+      bulkWrite: {
+        updateOne: {
+          filter: { _id: ObjectId(_id) },
+          update: {
+            $set: { lastupdated: new ISODate((Date.parse(lastupdated)) },
+          },
+        }
       },
     }))
     console.log(
